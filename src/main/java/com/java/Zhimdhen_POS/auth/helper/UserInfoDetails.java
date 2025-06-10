@@ -23,10 +23,7 @@ public class UserInfoDetails implements UserDetails {
     public UserInfoDetails(User userInfo) {
         this.email = userInfo.getEmail();
         this.password = userInfo.getPassword();
-        this.authorities = List.of(userInfo.getRole().name())
-                .stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + userInfo.getRole().name()));
     }
 
     @Override
