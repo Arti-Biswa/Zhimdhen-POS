@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,6 +43,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+
+        String path = request.getRequestURI();
+
+        // Allow GET requests to /api/categories without JWT auth (public endpoint)
+        if (path.startsWith("/api/categories") && HttpMethod.GET.matches(request.getMethod())) {  // <-- added condition for GET only
+            filterChain.doFilter(request, response);
+            return;  // bypass JWT auth filter for GET /api/categories
+        }
         try {
             // Retrieve the Authorization header
             String authHeader = request.getHeader("Authorization");
