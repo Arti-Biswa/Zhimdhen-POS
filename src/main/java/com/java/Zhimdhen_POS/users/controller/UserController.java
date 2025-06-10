@@ -15,14 +15,14 @@ import java.util.HashMap;
 
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserServiceImpl userServiceImpl;
 
     @GetMapping("/self")
-    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('CASHIER','ADMIN')")
     public ResponseEntity<RestResponse> fetchSelfInfo() {
         HashMap<String, Object> listHashMap = new HashMap<>();
         listHashMap.put("user", userServiceImpl.fetchSelfInfo());
