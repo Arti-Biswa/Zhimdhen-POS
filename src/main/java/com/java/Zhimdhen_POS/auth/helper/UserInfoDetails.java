@@ -23,7 +23,8 @@ public class UserInfoDetails implements UserDetails {
     public UserInfoDetails(User userInfo) {
         this.email = userInfo.getEmail();
         this.password = userInfo.getPassword();
-        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + userInfo.getRole().name()));
+        this.authorities = List.of(new SimpleGrantedAuthority(userInfo.getRole().name()));
+
     }
 
     @Override
@@ -40,5 +41,23 @@ public class UserInfoDetails implements UserDetails {
     public String getUsername() {
         return email;
     }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

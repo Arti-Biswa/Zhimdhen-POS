@@ -36,7 +36,7 @@ public class User extends AuditEntity {
     private String password;
 
     @Column(name = "phone_number")
-    private Long PhoneNumber;
+    private Long phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column
