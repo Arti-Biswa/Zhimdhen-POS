@@ -50,9 +50,15 @@ public class UserController {
      */
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<RestResponse> findAll() {
+    public ResponseEntity<RestResponse> findAll(@RequestParam(required=false)String role) {
         HashMap<String, Object> listHashMap = new HashMap<>();
-        listHashMap.put("users", userServiceImpl.findAll());
+
+        if(role != null){
+            User.Role roleEnum=User.Role.valueOf(role.toUpperCase());
+            listHashMap.put("users",userServiceImpl.findByRole(roleEnum));
+        }else{
+            listHashMap.put("users",userServiceImpl.findAll());
+        }
         return RestHelper.responseSuccess(listHashMap);
     }
 

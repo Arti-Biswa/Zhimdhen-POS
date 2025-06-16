@@ -40,9 +40,9 @@ public class CategoryController {
     }
 
     // 🔒 Only ADMIN can create a category
-    @PreAuthorize("hasRole('ADMIN')")
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO created = categoryService.createCategory(categoryDTO);
         return ResponseEntity.status(201).body(created);
