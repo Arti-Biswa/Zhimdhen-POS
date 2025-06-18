@@ -23,14 +23,14 @@ public class ProductController {
     }
 
     // 🔒 Admin only: Add product
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<ProductDTO> createProduct(@RequestBody @Valid ProductDTO productDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDTO));
     }
 
     // 🔒 Admin only: Update product
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{productId}")
     public ResponseEntity<ProductDTO> updateProduct(
             @PathVariable Long productId,
@@ -40,7 +40,7 @@ public class ProductController {
     }
 
     // 🔒 Admin only: Delete product
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{productId}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
         System.out.println(">>> Deleting product ID: " + productId);

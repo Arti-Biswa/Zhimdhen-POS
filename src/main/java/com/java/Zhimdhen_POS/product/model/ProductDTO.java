@@ -4,13 +4,13 @@ public class ProductDTO {
     private Long id;
     private String name;
     private double price;
-    private byte[] image;
+    private String image; // Accept base64-encoded string
     private Long categoryId;
 
     // Constructors
     public ProductDTO() {}
 
-    public ProductDTO(Long id, String name, double price, byte[] image, Long categoryId) {
+    public ProductDTO(Long id, String name, double price, String image, Long categoryId) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -27,7 +27,7 @@ public class ProductDTO {
         this.id = id;
     }
 
-    public String getName() {   // <-- This method must exist
+    public String getName() {
         return name;
     }
 
@@ -43,11 +43,11 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -58,4 +58,4 @@ public class ProductDTO {
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
-    }
+}

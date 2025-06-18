@@ -2,10 +2,8 @@ package com.java.Zhimdhen_POS.Category.controller;
 
 import com.java.Zhimdhen_POS.Category.model.CategoryDTO;
 import com.java.Zhimdhen_POS.Category.service.CategoryService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -41,16 +39,20 @@ public class CategoryController {
 
     // 🔒 Only ADMIN can create a category
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/add")
+
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO created = categoryService.createCategory(categoryDTO);
         return ResponseEntity.status(201).body(created);
     }
 
     // 🔒 Only ADMIN can update a category
-    @PreAuthorize("hasRole('ADMIN')")
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id,
                                                       @Valid @RequestBody CategoryDTO categoryDTO) {
@@ -60,6 +62,5 @@ public class CategoryController {
         }
         return ResponseEntity.ok(updatedCategory);
     }
-
 
 }
