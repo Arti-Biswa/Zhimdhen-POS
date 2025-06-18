@@ -50,9 +50,15 @@ public class UserController {
      */
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<RestResponse> findAll() {
+    public ResponseEntity<RestResponse> findAll(@RequestParam(required=false)String role) {
         HashMap<String, Object> listHashMap = new HashMap<>();
-        listHashMap.put("users", userServiceImpl.findAll());
+
+        if(role != null){
+            User.Role roleEnum=User.Role.valueOf(role.toUpperCase());
+            listHashMap.put("users",userServiceImpl.findByRole(roleEnum));
+        }else{
+            listHashMap.put("users",userServiceImpl.findAll());
+        }
         return RestHelper.responseSuccess(listHashMap);
     }
 
@@ -89,11 +95,12 @@ public class UserController {
      * @return The message indicating the confirmation on updated user entity.
      */
     @PatchMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<RestResponse> update(@PathVariable long id, @Validated UserDTO UserDTO) {
-
-        String message = userServiceImpl.update(id, UserDTO);
-
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<RestResponse> update(
+            @PathVariable long id,
+            @Validated @RequestBody UserDTO userDTO
+    ) {
+        String message = userServiceImpl.update(id, userDTO);
         return RestHelper.responseMessage(message);
     }
 }

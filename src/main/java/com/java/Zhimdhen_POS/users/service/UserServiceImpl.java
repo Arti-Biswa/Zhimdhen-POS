@@ -71,22 +71,32 @@ public class UserServiceImpl implements UserService {
                 ));
     }
 
+    public List<User>findByRole(User.Role role){
+        return userRepository.findByRole(role);
+    }
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    @Transactional
     @Override
     public String update (long id, UserDTO dto){
         User user = userRepository.findById(id)
         .orElseThrow(()->new RuntimeException("User not found"));
 
         if(dto.getUsername()!= null)user.setUsername(dto.getUsername());
+        if(dto.getEmail()!= null)user.setEmail(dto.getEmail());
         if(dto.getPhoneNumber()!= null)user.setPhoneNumber(dto.getPhoneNumber());
-
+        if (dto.getRole() != null) {
+            try {
+                user.setRole(User.Role.valueOf(dto.getRole().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid role value: " + dto.getRole());
+            }
+        }
         userRepository.save(user);
         return "User Updated succesfully";
-
     }
     @Override
     public String updateEntity(User user) {
