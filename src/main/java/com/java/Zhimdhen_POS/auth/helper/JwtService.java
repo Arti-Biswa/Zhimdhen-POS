@@ -48,6 +48,7 @@ public class JwtService {
      */
     public String generateRefreshToken(String username) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("type","refresh");
         return createToken(claims, username, refreshTokenExpiration);
     }
 

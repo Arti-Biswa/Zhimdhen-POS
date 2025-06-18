@@ -7,12 +7,10 @@ import com.java.Zhimdhen_POS.users.service.UserService;
 import com.java.Zhimdhen_POS.utils.RestHelper;
 import com.java.Zhimdhen_POS.utils.RestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,5 +47,18 @@ public class AuthController {
         Map<String, Object> listHashMap = new HashMap<>();
         listHashMap.put("user", userService.save(user));
         return RestHelper.responseSuccess(listHashMap);
+    }
+    /**
+     * Handles token refresh using a valid refresh token
+     *
+     * @param authorizationHeader Headers with Authorization keyword
+     * @return New access and refresh tokens
+     */
+    @PostMapping("/refresh-token")
+    public ResponseEntity<RestResponse> refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        // Extract token from Bearer authorization header
+        String refreshToken = authorizationHeader.substring(7); // Remove "Bearer "
+        Map<String, Object> tokenMap = new HashMap<>(loginService.refreshToken(refreshToken));
+        return RestHelper.responseSuccess(tokenMap);
     }
 }
