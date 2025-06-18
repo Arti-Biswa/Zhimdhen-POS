@@ -48,6 +48,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN")
+<<<<<<< POS-07
+=======
+                        .requestMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("ADMIN","CASHIER")
+                        .requestMatchers(HttpMethod.POST, "/api/tables/add").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/tables/list").hasAnyAuthority("ADMIN","CASHIER")
+>>>>>>> main
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager -> sessionManager
