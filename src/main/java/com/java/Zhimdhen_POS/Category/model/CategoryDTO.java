@@ -3,21 +3,26 @@ package com.java.Zhimdhen_POS.Category.model;
 public class CategoryDTO {
     private Long id;
     private String name;
+    private String description;  // <<-- Add this field
 
-    // Constructors
-    public CategoryDTO() {
-    }
+    // Default constructor
+    public CategoryDTO() {}
 
-    public CategoryDTO(Long id, String name) {
+    // Constructor with all fields
+    public CategoryDTO(Long id, String name, String description) {
         this.id = id;
         this.name = name;
+        this.description = description;
     }
 
-    public CategoryDTO(String name) {
+    // Constructor without id
+    public CategoryDTO(String name, String description) {
         this.name = name;
+        this.description = description;
     }
 
-    // Getters and Setters
+    // Getters and setters for all fields
+
     public Long getId() {
         return id;
     }
@@ -32,5 +37,13 @@ public class CategoryDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {      // getter for description
+        return description;
+    }
+
+    public void setDescription(String description) {   // setter for description
+        this.description = description;
     }
 }

@@ -40,10 +40,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()// Allow GET /api/categories
-                        .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/categories/add").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority("ADMIN")  // Admin only can add product
-                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("ADMIN","CASHIER")

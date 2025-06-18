@@ -1,6 +1,5 @@
 package com.java.Zhimdhen_POS.product.service;
 
-
 import com.java.Zhimdhen_POS.Category.model.Category;
 import com.java.Zhimdhen_POS.Category.repository.CategoryRepository;
 import com.java.Zhimdhen_POS.product.mapper.ProductMapper;
@@ -10,6 +9,7 @@ import com.java.Zhimdhen_POS.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +33,19 @@ public class ProductServiceImpl implements ProductService {
         Product product = new Product();
         product.setName(productDTO.getName());
         product.setPrice(productDTO.getPrice());
-        product.setImage(productDTO.getImage());
+
+        String base64Image = productDTO.getImage();
+        if (base64Image != null && !base64Image.isEmpty()) {
+            // Strip prefix if present
+            if (base64Image.contains(",")) {
+                base64Image = base64Image.substring(base64Image.indexOf(",") + 1);
+            }
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            product.setImage(imageBytes);
+        } else {
+            product.setImage(null);
+        }
+
         product.setCategory(category);
 
         Product saved = productRepository.save(product);
@@ -50,7 +62,16 @@ public class ProductServiceImpl implements ProductService {
 
         existingProduct.setName(productDTO.getName());
         existingProduct.setPrice(productDTO.getPrice());
-        existingProduct.setImage(productDTO.getImage());
+
+        String base64Image = productDTO.getImage();
+        if (base64Image != null && !base64Image.isEmpty()) {
+            if (base64Image.contains(",")) {
+                base64Image = base64Image.substring(base64Image.indexOf(",") + 1);
+            }
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            existingProduct.setImage(imageBytes);
+        }
+
         existingProduct.setCategory(category);
 
         Product updated = productRepository.save(existingProduct);
