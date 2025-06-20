@@ -37,7 +37,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        if (categoryRepository.findByName(categoryDTO.getName()).isPresent()) {
+        // Changed to find all by name to avoid NonUniqueResultException
+        List<Category> existingCategories = categoryRepository.findByName(categoryDTO.getName());
+
+        if (!existingCategories.isEmpty()) {
             throw new RuntimeException("Category already exists");
         }
         Category category = CategoryMapper.toEntity(categoryDTO);
