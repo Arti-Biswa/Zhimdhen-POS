@@ -50,12 +50,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/tables/add").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/tables/list").hasAnyAuthority("ADMIN","CASHIER")
+                        .requestMatchers("/api/qr/**").permitAll()
+                        .requestMatchers("/api/orders/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/admin/products").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/restaurants/add").hasAnyAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/restaurants/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/restaurants/**").hasAnyAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/restaurants/**").hasAnyAuthority("SUPER_ADMIN")
-
-
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager -> sessionManager
