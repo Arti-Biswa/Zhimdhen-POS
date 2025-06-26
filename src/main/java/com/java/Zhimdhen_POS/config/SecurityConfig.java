@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("ADMIN","CASHIER")
+                        .requestMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("SUPER_ADMIN","ADMIN","CASHIER")
                         .requestMatchers(HttpMethod.PATCH, "/api/users/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()// Allow GET /api/categories
@@ -50,6 +50,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/tables/add").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/tables/list").hasAnyAuthority("ADMIN","CASHIER")
+                        .requestMatchers(HttpMethod.POST, "/api/restaurants/add").hasAnyAuthority("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/restaurants/**").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/restaurants/**").hasAnyAuthority("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/restaurants/**").hasAnyAuthority("SUPER_ADMIN")
+
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager -> sessionManager
