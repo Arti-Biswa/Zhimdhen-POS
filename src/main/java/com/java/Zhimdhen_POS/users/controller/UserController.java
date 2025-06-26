@@ -22,7 +22,7 @@ public class UserController {
     private UserServiceImpl userServiceImpl;
 
     @GetMapping("/self")
-    @PreAuthorize("hasAnyAuthority('CASHIER','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN','CASHIER','ADMIN')")
     public ResponseEntity<RestResponse> fetchSelfInfo() {
         HashMap<String, Object> listHashMap = new HashMap<>();
         listHashMap.put("user", userServiceImpl.fetchSelfInfo());

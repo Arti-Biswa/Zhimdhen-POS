@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.java.Zhimdhen_POS.utils.AuditEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,6 +34,7 @@ public class User extends AuditEntity {
     private String email;
 
     @Column(nullable = false)
+    @Size(min = 8)
     private String password;
 
     @Column(name = "phone_number")
@@ -48,6 +50,7 @@ public class User extends AuditEntity {
     }
 
     public enum Role{
+        SUPER_ADMIN,
         ADMIN,
         CASHIER
     }
