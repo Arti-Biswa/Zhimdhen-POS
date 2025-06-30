@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
@@ -60,6 +61,13 @@ public class UserController {
             listHashMap.put("users",userServiceImpl.findAll());
         }
         return RestHelper.responseSuccess(listHashMap);
+    }
+
+    @GetMapping("/by-restaurant")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<UserDTO>> getUsersByRestaurant() {
+        List<UserDTO> users = userServiceImpl.findUsersByAdminRestaurant();
+        return ResponseEntity.ok(users);
     }
 
     /**

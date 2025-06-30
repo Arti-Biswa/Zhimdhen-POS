@@ -9,5 +9,4 @@ public class ZhimdhenPosApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ZhimdhenPosApplication.class, args);
 	}
-
 }

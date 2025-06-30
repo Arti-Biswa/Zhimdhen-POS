@@ -1,5 +1,6 @@
 package com.java.Zhimdhen_POS.restaurant.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.java.Zhimdhen_POS.users.model.User;
 import com.java.Zhimdhen_POS.utils.AuditEntity;
 import jakarta.persistence.*;
@@ -38,6 +39,7 @@ public class Restaurant extends AuditEntity {
     @Column
     private String image;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

@@ -1,7 +1,9 @@
 package com.java.Zhimdhen_POS.users.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.java.Zhimdhen_POS.restaurant.model.Restaurant;
 import com.java.Zhimdhen_POS.utils.AuditEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -48,6 +50,11 @@ public class User extends AuditEntity {
     public User(@JsonProperty("id") long id) {
         this.id = id;
     }
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
 
     public enum Role{
         SUPER_ADMIN,

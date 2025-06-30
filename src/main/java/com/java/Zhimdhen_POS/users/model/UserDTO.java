@@ -14,4 +14,6 @@ public class UserDTO{
     private String password;
     private Long PhoneNumber;
     private String role;
+    private Long restaurantId;
+
 }

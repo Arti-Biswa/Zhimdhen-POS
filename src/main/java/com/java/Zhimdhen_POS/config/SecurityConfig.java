@@ -38,16 +38,20 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register","/api/auth/forgot-password","/api/auth/reset-password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("SUPER_ADMIN","ADMIN","CASHIER")
+                        .requestMatchers(HttpMethod.GET, "/api/users/by-restaurant").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/users/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority("ADMIN")
+
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()// Allow GET /api/categories
                         .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority("ADMIN")  // Admin only can add product
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/uploads/images/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/admin/products").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/tables/add").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/tables/list").hasAnyAuthority("ADMIN","CASHIER")
                         .requestMatchers(HttpMethod.DELETE, "/api/tables/**").hasAuthority("ADMIN")
@@ -55,6 +59,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/admin/products").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/restaurants/add").hasAnyAuthority("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/restaurants/self").hasAuthority("ADMIN")
+                        .requestMatchers("/uploads/restaurants/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/restaurants/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/restaurants/**").hasAnyAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/restaurants/**").hasAnyAuthority("SUPER_ADMIN")

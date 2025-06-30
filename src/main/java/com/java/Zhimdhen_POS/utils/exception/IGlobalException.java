@@ -32,4 +32,6 @@ public interface IGlobalException {
         restResponse.setMessage(exception.getMessage());
         return restResponse;
     }
+
+
 }
