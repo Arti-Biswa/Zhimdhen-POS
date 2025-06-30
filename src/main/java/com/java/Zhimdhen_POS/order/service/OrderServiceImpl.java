@@ -41,6 +41,11 @@ public class OrderServiceImpl implements OrderService {
         }
         return result;
     }
+    @Override
+    public Order getLatestOrderWithItems(Long tableId) {
+        List<Order> orders = orderRepository.findTopByTableIdOrderByOrderTimeDesc(tableId);
+        return orders.isEmpty() ? null : orders.get(0);
+    }
 
     @Override
     @Transactional

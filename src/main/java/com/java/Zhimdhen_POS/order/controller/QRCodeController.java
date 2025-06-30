@@ -23,12 +23,12 @@ public class QRCodeController {
         this.qrCodeService = qrCodeService;
     }
 
-    @CrossOrigin(origins =  "http://192.168.1.108:4200") // ⚠️ For development only. Replace with specific IP for production.
+    @CrossOrigin(origins =  "http://192.168.1.106:4200") // ⚠️ For development only. Replace with specific IP for production.
     @GetMapping(value = "/table/{tableId}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> generateQRCode(@PathVariable String tableId) {
         try {
             // You can make the host dynamic if needed, or change to a fixed IP for QR redirect
-            String baseUrl = "http://192.168.1.108:4200/menu?table=";
+            String baseUrl = "http://192.168.1.106:4200/menu?table=";
             String qrText = baseUrl + URLEncoder.encode(tableId, StandardCharsets.UTF_8);
 
 

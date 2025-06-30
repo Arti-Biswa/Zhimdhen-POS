@@ -15,4 +15,6 @@ public interface OrderService {
 
     // Marks orders as viewed for a given tableId (clears notification)
     void markOrdersAsViewed(Long tableId);
+
+    Order getLatestOrderWithItems(Long tableId);
 }

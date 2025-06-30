@@ -17,5 +17,8 @@ public class OrderResponseDTO {
         private Long id;
         private Long productId;
         private int quantity;
+        private String itemName;      // ✅ NEW
+        private Double price;         // ✅ NEW
+        private String imageUrl;
     }
 }
