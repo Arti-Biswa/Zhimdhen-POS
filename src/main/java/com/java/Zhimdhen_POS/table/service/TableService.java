@@ -36,4 +36,16 @@ public class TableService {
     public List<TableEntity> getAllTables() {
         return tableRepository.findAll();
     }
+
+    /**
+     * Delete a table by its ID.
+     * @param id the ID of the table to delete
+     */
+    public boolean deleteTableById(Long id) {
+        if (tableRepository.existsById(id)) {
+            tableRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
