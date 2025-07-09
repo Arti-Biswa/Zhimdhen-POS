@@ -2,10 +2,15 @@ package com.java.Zhimdhen_POS.Category.controller;
 
 import com.java.Zhimdhen_POS.Category.model.CategoryDTO;
 import com.java.Zhimdhen_POS.Category.service.CategoryService;
+import com.java.Zhimdhen_POS.Category.service.CategoryServiceImpl;
+import com.java.Zhimdhen_POS.auth.helper.UserInfoDetails;
+import com.java.Zhimdhen_POS.product.model.ProductDTO;
+import com.java.Zhimdhen_POS.users.model.UserDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,17 +22,29 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @Autowired
+    private CategoryServiceImpl categoryServiceImpl;
+
+    @Autowired
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
-    // ✅ Anyone (public) can view categories
-    @GetMapping
-    public List<CategoryDTO> getAllCategories() {
-        return categoryService.getAllCategories();
+    @GetMapping("/by-restaurant")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<CategoryDTO>> getCategoriesByRestaurant(
+            @AuthenticationPrincipal UserInfoDetails principal) {
+
+        List<CategoryDTO> categories =
+                categoryService.findCategoriesByAdminRestaurant(principal.getRestaurantId());
+
+        return ResponseEntity.ok(categories);
     }
 
-    // ✅ Anyone (public) can view category by ID
+    @GetMapping("/public")
+    public List<CategoryDTO> listForCustomer(@RequestParam Long restaurantId) {
+        return categoryService.getCategoriesByRestaurantId(restaurantId);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
         CategoryDTO categoryDTO = categoryService.getCategoryById(id);
@@ -37,17 +54,13 @@ public class CategoryController {
         return ResponseEntity.ok(categoryDTO);
     }
 
-    // 🔒 Only ADMIN can create a category
-
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
-        CategoryDTO created = categoryService.createCategory(categoryDTO);
+        CategoryDTO created = categoryServiceImpl.createCategory(categoryDTO);
         return ResponseEntity.status(201).body(created);
     }
 
-    // 🔒 Only ADMIN can update a category
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id,
@@ -58,5 +71,4 @@ public class CategoryController {
         }
         return ResponseEntity.ok(updatedCategory);
     }
-
 }

@@ -1,8 +1,15 @@
 package com.java.Zhimdhen_POS.table.model;
 
+import com.java.Zhimdhen_POS.restaurant.model.Restaurant;
 import jakarta.persistence.*;
+import lombok.Data;
+
 @Entity
-@Table(name = "restaurant_tables")
+@Data
+@Table(
+        name = "restaurant_tables",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"restaurant_id", "table_number"})
+)
 public class TableEntity {
 
     @Id
@@ -12,26 +19,9 @@ public class TableEntity {
     @Column(name = "table_number", nullable = false, unique = true)
     private String tableNumber;
 
-    // Constructors
-    public TableEntity() {}
-    public TableEntity(String tableNumber) {
-        this.tableNumber = tableNumber;
-    }
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTableNumber() {
-        return tableNumber;
-    }
-
-    public void setTableNumber(String tableNumber) {
-        this.tableNumber = tableNumber;
-    }
 }

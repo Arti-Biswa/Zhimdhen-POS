@@ -4,7 +4,13 @@ import com.java.Zhimdhen_POS.Category.mapper.CategoryMapper;
 import com.java.Zhimdhen_POS.Category.model.Category;
 import com.java.Zhimdhen_POS.Category.model.CategoryDTO;
 import com.java.Zhimdhen_POS.Category.repository.CategoryRepository;
+import com.java.Zhimdhen_POS.restaurant.model.Restaurant;
+import com.java.Zhimdhen_POS.restaurant.repository.RestaurantRepository;
+import com.java.Zhimdhen_POS.users.model.User;
+import com.java.Zhimdhen_POS.users.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +21,16 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private  CategoryMapper categoryMapper;
+
 
     @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
@@ -36,14 +52,34 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        // Changed to find all by name to avoid NonUniqueResultException
-        List<Category> existingCategories = categoryRepository.findByName(categoryDTO.getName());
+    @Transactional
+    public CategoryDTO createCategory(CategoryDTO dto) {
 
-        if (!existingCategories.isEmpty()) {
-            throw new RuntimeException("Category already exists");
+        /* 1️⃣  Grab the email that Spring Security put in the Authentication object */
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        /* 2️⃣  Load the admin by that email */
+        User admin = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Logged‑in user not found"));
+
+        Restaurant restaurant = admin.getRestaurant();
+        if (restaurant == null) {
+            throw new IllegalStateException("Admin is not linked to any restaurant");
         }
-        Category category = CategoryMapper.toEntity(categoryDTO);
+
+        /* 3️⃣  Prevent duplicates inside *this* restaurant */
+        if (categoryRepository.existsByRestaurantAndName(restaurant, dto.getName())) {
+            throw new RuntimeException("Category already exists for this restaurant");
+        }
+
+        /* 4️⃣  Save category */
+        Category category = new Category();
+        category.setName(dto.getName());
+        category.setRestaurant(restaurant);
+
         return CategoryMapper.toDTO(categoryRepository.save(category));
     }
 
@@ -55,5 +91,21 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = optional.get();
         category.setName(categoryDTO.getName());
         return CategoryMapper.toDTO(categoryRepository.save(category));
+    }
+
+    @Override
+    public List<CategoryDTO> findCategoriesByAdminRestaurant(Long restaurantId) {
+            return categoryRepository.findByRestaurantId(restaurantId)
+                    .stream()
+                    .map(CategoryMapper::toDTO)
+                    .collect(Collectors.toList());
+        }
+
+    @Override
+    public List<CategoryDTO> getCategoriesByRestaurantId(Long restaurantId) {
+        return categoryRepository.findByRestaurantId(restaurantId)
+                .stream()
+                .map(CategoryMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

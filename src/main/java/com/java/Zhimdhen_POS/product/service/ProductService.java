@@ -22,6 +22,8 @@ public interface ProductService {
     // Get products filtered by category ID
     List<ProductDTO> getProductsByCategoryId(Long categoryId);
 
-    // Get all products (NEW method)
+
+    List<ProductDTO> getProductsByRestaurantId(Long restaurantId);
+
     List<ProductDTO> getAllProducts();
 }

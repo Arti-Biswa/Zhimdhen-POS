@@ -9,4 +9,8 @@ public interface CategoryService {
     CategoryDTO getCategoryById(Long id);
     CategoryDTO createCategory(CategoryDTO categoryDTO);
     CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO);
+
+    List<CategoryDTO> findCategoriesByAdminRestaurant(Long restaurantId);
+
+    List<CategoryDTO> getCategoriesByRestaurantId(Long restaurantId);
 }

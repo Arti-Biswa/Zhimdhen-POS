@@ -9,4 +9,5 @@ public class ProductDTO {
     private double price;
     private Long categoryId;
     private String image;
+    private Long restaurantId;
 }

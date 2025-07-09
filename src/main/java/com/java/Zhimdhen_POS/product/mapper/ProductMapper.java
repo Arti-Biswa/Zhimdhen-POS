@@ -18,6 +18,9 @@ public class ProductMapper {
         if (product.getCategory() != null) {
             dto.setCategoryId(product.getCategory().getId());
         }
+        if (product.getRestaurant() != null) {
+            dto.setRestaurantId(product.getRestaurant().getId()); // ✅
+        }
 
         return dto;
     }
@@ -30,8 +33,7 @@ public class ProductMapper {
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
         product.setCategory(category);
-        product.setImage(dto.getImage()); // ✅ Include image path
-
+        product.setImage(dto.getImage());
         return product;
     }
 }

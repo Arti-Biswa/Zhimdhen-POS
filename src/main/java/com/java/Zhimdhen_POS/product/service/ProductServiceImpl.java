@@ -6,7 +6,12 @@ import com.java.Zhimdhen_POS.product.mapper.ProductMapper;
 import com.java.Zhimdhen_POS.product.model.Product;
 import com.java.Zhimdhen_POS.product.model.ProductDTO;
 import com.java.Zhimdhen_POS.product.repository.ProductRepository;
+import com.java.Zhimdhen_POS.restaurant.model.Restaurant;
+import com.java.Zhimdhen_POS.users.model.User;
+import com.java.Zhimdhen_POS.users.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,41 +28,59 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
     }
 
     @Override
-    public ProductDTO createProduct(ProductDTO productDTO, MultipartFile imageFile) {
-        Product product = new Product();
-        product.setName(productDTO.getName());
-        product.setPrice(productDTO.getPrice());
+    @Transactional
+    public ProductDTO createProduct(ProductDTO dto, MultipartFile imageFile) {
 
-        Category category = categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-        product.setCategory(category);
+        /* 1️⃣  Logged‑in admin → restaurant */
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();          // token subject = email
+        User admin = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Logged‑in user not found"));
 
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                // Declare uploadDir here as a String
-                String uploadDir = System.getProperty("user.dir") + "/uploads/images/";
-                String filename = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-
-                File saveFile = new File(uploadDir + filename);
-                saveFile.getParentFile().mkdirs();
-                imageFile.transferTo(saveFile);
-
-                product.setImage("/uploads/images/" + filename);
-            } catch (IOException e) {
-                e.printStackTrace();  // Print the full stack trace
-                throw new RuntimeException("Failed to save image", e);
-            }
+        Restaurant restaurant = admin.getRestaurant();
+        if (restaurant == null) {
+            throw new IllegalStateException("Admin is not linked to any restaurant");
         }
 
-        Product savedProduct = productRepository.save(product);
+        /* 2️⃣  Load category (and ensure it belongs to this restaurant) */
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        return ProductMapper.toDTO(savedProduct);
+        if (!category.getRestaurant().getId().equals(restaurant.getId())) {
+            throw new RuntimeException("Category does not belong to this restaurant");
+        }
+
+        /* 3️⃣  Build product */
+        Product product = new Product();
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        product.setCategory(category);
+        product.setRestaurant(restaurant);
+
+        try {
+            String uploadDir = System.getProperty("user.dir") + "/uploads/images/";
+            String filename = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+            File saveFile = new File(uploadDir + filename);
+            saveFile.getParentFile().mkdirs();
+            imageFile.transferTo(saveFile);
+            product.setImage("/uploads/images/" + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to save image", e);
+        }
+
+        /* 6️⃣  Save & return */
+        return ProductMapper.toDTO(productRepository.save(product));
     }
 
     @Override
@@ -102,7 +125,6 @@ public class ProductServiceImpl implements ProductService {
         return ProductMapper.toDTO(updatedProduct);
     }
 
-
     @Override
     public void deleteProduct(Long productId) {
         if (!productRepository.existsById(productId)) {
@@ -117,6 +139,14 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .map(ProductMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDTO> getProductsByRestaurantId(Long restaurantId) {
+        return productRepository.findByRestaurantId(restaurantId)
+                .stream()
+                .map(ProductMapper::toDTO)
+                .toList();
     }
 
     @Override

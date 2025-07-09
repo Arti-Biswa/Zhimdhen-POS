@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,12 +21,10 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "users")
-public class User extends AuditEntity {
-
+public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQUENCE")
-    @SequenceGenerator(name = "USER_SEQUENCE", sequenceName = "user_seq", allocationSize = 1)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     private String username;
@@ -40,16 +37,12 @@ public class User extends AuditEntity {
     private String password;
 
     @Column(name = "phone_number")
+    @Size(min = 8, max=8)
     private Long phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column
     private Role role;
-
-    @JsonCreator
-    public User(@JsonProperty("id") long id) {
-        this.id = id;
-    }
 
     @JsonBackReference
     @ManyToOne

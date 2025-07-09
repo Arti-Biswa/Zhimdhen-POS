@@ -1,19 +1,21 @@
 package com.java.Zhimdhen_POS.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.java.Zhimdhen_POS.auth.helper.UserInfoDetails;
 import com.java.Zhimdhen_POS.product.model.ProductDTO;
 import com.java.Zhimdhen_POS.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/products")
+@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -56,7 +58,6 @@ public class ProductController {
         }
     }
 
-
     // 🔒 Admin only: Delete product
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{productId}")
@@ -65,16 +66,19 @@ public class ProductController {
         return ResponseEntity.ok("✅ Product deleted successfully!");
     }
 
-    // ❗ Temporarily accessible here, but should ideally be in a public controller
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable Long categoryId) {
         return ResponseEntity.ok(productService.getProductsByCategoryId(categoryId));
     }
 
-    @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+    @GetMapping("/admin-products")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<ProductDTO> listForMyRestaurant(@AuthenticationPrincipal UserInfoDetails me) {
+        return productService.getProductsByRestaurantId(me.getRestaurantId());   // safe: always “mine”
     }
 
+    @GetMapping("/public")
+    public List<ProductDTO> listByRestaurant(@RequestParam Long restaurantId) {
+        return productService.getProductsByRestaurantId(restaurantId);
+    }
 }
