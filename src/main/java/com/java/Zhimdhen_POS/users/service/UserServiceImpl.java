@@ -31,13 +31,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO save(@NonNull User user) {
+        // Check duplicate email
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new GlobalExceptionWrapper.BadRequestException(DUPLICATE_EMAIL_MESSAGE);
         }
 
+        // Encode password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        // If user is a cashier, assign restaurant from logged-in admin
+        if (user.getRole() == User.Role.CASHIER) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+            if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
+                throw new GlobalExceptionWrapper.BadRequestException("No authenticated admin found to assign restaurant.");
+            }
+
+            String adminEmail = auth.getName();
+            Optional<User> adminOpt = userRepository.findByEmail(adminEmail);
+
+            User admin = adminOpt.orElseThrow(() ->
+                    new GlobalExceptionWrapper.BadRequestException("Admin not found"));
+
+            if (admin.getRestaurant() == null) {
+                throw new GlobalExceptionWrapper.BadRequestException("Admin's restaurant not found.");
+            }
+
+            // Assign restaurant to cashier
+            user.setRestaurant(admin.getRestaurant());
+        }
+
+        // Save user
         User savedUser = userRepository.save(user);
+
         return UserMapper.toDTO(savedUser);
     }
 
@@ -77,6 +103,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public List<UserDTO> findUsersByAdminRestaurant() {
+        String adminEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User admin = userRepository.findByEmail(adminEmail)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+        List<User> users = userRepository.findByRestaurant(admin.getRestaurant());
+        return UserMapper.toDTO(users);
     }
 
     @Transactional

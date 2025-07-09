@@ -5,14 +5,17 @@ import com.java.Zhimdhen_POS.restaurant.model.RestaurantDTO;
 import com.java.Zhimdhen_POS.restaurant.services.RestaurantServiceImpl;
 import com.java.Zhimdhen_POS.utils.RestHelper;
 import com.java.Zhimdhen_POS.utils.RestResponse;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -45,6 +48,15 @@ public class RestaurantController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    /** Returns the restaurant self info **/
+    @GetMapping("/self")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<RestResponse> fetchSelfRestaurant() {
+        RestaurantDTO dto = restaurantServiceImpl.fetchSelfRestaurant();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("restaurant", dto);
+        return RestHelper.responseSuccess(map);
     }
 
     /**
@@ -109,4 +121,5 @@ public class RestaurantController {
             return RestHelper.responseMessage("Update failed: " + e.getMessage());
         }
     }
+
 }

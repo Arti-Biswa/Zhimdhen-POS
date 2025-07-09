@@ -26,4 +26,6 @@ public interface RestaurantService extends IGenericCrudService<Restaurant, Resta
 
     @Transactional
     String deleteById(long restaurantId);
+
+    RestaurantDTO fetchSelfRestaurant();
 }

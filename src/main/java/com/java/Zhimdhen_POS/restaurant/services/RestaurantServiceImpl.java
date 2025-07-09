@@ -49,30 +49,34 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public RestaurantDTO save(RestaurantDTO dto, MultipartFile imageFile) throws IOException {
 
-        // Save image to local folder or desired location
         String filename = imageFile.getOriginalFilename();
         Path imagePath = Paths.get("uploads/restaurants", filename);
         Files.createDirectories(imagePath.getParent());
         Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // Save just the filename or relative path in the DB
         dto.setImage("uploads/restaurants/" + filename);
 
-        // Convert DTO to entity
         Restaurant restaurant = restaurantMapper.toRestaurant(dto);
 
-        // Optional: Set user and role here if needed
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
         user.setPhoneNumber(Long.valueOf(dto.getPhoneNumber()));
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole(User.Role.ADMIN); // Assign admin role
+        user.setRole(User.Role.ADMIN);
+
+        // Save user without restaurant first
         userRepository.save(user);
 
+        // Link user to restaurant
         restaurant.setUser(user);
 
+        // Save restaurant (restaurant gets ID)
         restaurantRepository.save(restaurant);
+
+        // Set restaurant in user and update user
+        user.setRestaurant(restaurant);
+        userRepository.save(user);
 
         return restaurantMapper.toDto(restaurant);
     }
@@ -150,7 +154,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         return "Restaurant updated successfully.";
     }
 
-
     @Override
     public User fetchSelfInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -190,5 +193,18 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
 
         return String.format("Restaurant and its admin user deleted successfully.");
+    }
+
+    @Override
+    public RestaurantDTO fetchSelfRestaurant() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((com.java.Zhimdhen_POS.auth.helper.UserInfoDetails) auth.getPrincipal()).getUsername();
+
+        Restaurant restaurant = restaurantRepository.findByUser_Email(email)
+                .orElseThrow(() -> new GlobalExceptionWrapper.NotFoundException(
+                        String.format("Restaurant not found for user %s", email)
+                ));
+
+        return restaurantMapper.toDto(restaurant);
     }
 }
