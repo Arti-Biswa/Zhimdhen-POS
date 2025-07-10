@@ -44,20 +44,23 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/users/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()// Allow GET /api/categories
                         .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority("ADMIN")  // Admin only can add product
+                        .requestMatchers(HttpMethod.GET, "/api/categories/by-restaurant").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/uploads/images/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/admin/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/public").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/admin-products").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/tables/add").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/tables/list").hasAnyAuthority("ADMIN","CASHIER")
                         .requestMatchers(HttpMethod.DELETE, "/api/tables/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/qr/**").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/admin/products").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/restaurants/add").hasAnyAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/restaurants/self").hasAuthority("ADMIN")
                         .requestMatchers("/uploads/restaurants/**").permitAll()

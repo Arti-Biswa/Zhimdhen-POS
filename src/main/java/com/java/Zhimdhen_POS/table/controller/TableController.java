@@ -1,6 +1,7 @@
 package com.java.Zhimdhen_POS.table.controller;
 
-import com.java.Zhimdhen_POS.table.dto.TableDto;
+import com.java.Zhimdhen_POS.auth.helper.UserInfoDetails;
+import com.java.Zhimdhen_POS.table.model.TableDto;
 import com.java.Zhimdhen_POS.table.mapper.TableMapper;
 import com.java.Zhimdhen_POS.table.model.TableEntity;
 import com.java.Zhimdhen_POS.table.service.TableService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +24,7 @@ public class TableController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/add")
     public TableEntity addTable(@RequestBody TableDto tableDto) {
-        TableEntity table = TableMapper.toEntity(tableDto);
-        return tableService.addTable(table);
+        return tableService.addTable(tableDto);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -43,4 +44,16 @@ public class TableController {
     public List<TableEntity> getAllTables() {
         return tableService.getAllTables();
     }
+
+    @GetMapping("/by-restaurant")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<TableDto>> getTablesByRestaurant(
+            @AuthenticationPrincipal UserInfoDetails principal) {
+
+        List<TableDto> tables = tableService
+                .findTablesByAdminRestaurant(principal.getRestaurantId());
+
+        return ResponseEntity.ok(tables);
+    }
+
 }

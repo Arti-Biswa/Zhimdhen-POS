@@ -1,6 +1,7 @@
 package com.java.Zhimdhen_POS.auth.helper;
 
 import com.java.Zhimdhen_POS.users.model.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,9 @@ public class UserInfoDetails implements UserDetails {
     private final String password;
     private final List<GrantedAuthority> authorities;
 
+    @Getter
+    private final Long restaurantId;
+
     /**
      * Initializes the parameterized constructor
      *
@@ -24,6 +28,9 @@ public class UserInfoDetails implements UserDetails {
         this.password = userInfo.getPassword();
         this.authorities = List.of(new SimpleGrantedAuthority(userInfo.getRole().name()));
 
+        this.restaurantId = (userInfo.getRestaurant() == null)
+                ? null
+                : userInfo.getRestaurant().getId();
     }
 
     @Override

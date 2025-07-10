@@ -48,9 +48,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // Allow GET requests to /api/categories without JWT auth (public endpoint)
-        if (path.startsWith("/api/categories") && HttpMethod.GET.matches(request.getMethod())) {  // <-- added condition for GET only
-            filterChain.doFilter(request, response);
-            return;  // bypass JWT auth filter for GET /api/categories
+        if ("/api/categories".equals(path) && HttpMethod.GET.matches(request.getMethod())) {
+            filterChain.doFilter(request, response);   // only GET /api/categories
+            return;
         }
         try {
             // Retrieve the Authorization header
