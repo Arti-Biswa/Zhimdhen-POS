@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/tables/list").hasAnyAuthority("ADMIN","CASHIER")
                         .requestMatchers(HttpMethod.DELETE, "/api/tables/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/qr/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/payments/submit").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/restaurants/add").hasAnyAuthority("SUPER_ADMIN")
