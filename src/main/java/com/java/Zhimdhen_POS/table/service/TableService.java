@@ -22,12 +22,6 @@ public class TableService {
     @Autowired
     private UserRepository userRepository;
 
-
-    /**
-     * Add a new table after checking for duplicate table number.
-     * @param table The table entity to save.
-     * @return The saved table entity.
-     */
     @Transactional
     public TableEntity addTable(TableDto dto) {
         if (dto.getTableNumber() == null || dto.getTableNumber().trim().isEmpty()) {
@@ -56,18 +50,10 @@ public class TableService {
 
     }
 
-    /**
-     * Retrieve all tables from the database.
-     * @return List of table entities.
-     */
     public List<TableEntity> getAllTables() {
         return tableRepository.findAll();
     }
 
-    /**
-     * Delete a table by its ID.
-     * @param id the ID of the table to delete
-     */
     public boolean deleteTableById(Long id) {
         if (tableRepository.existsById(id)) {
             tableRepository.deleteById(id);
@@ -87,5 +73,11 @@ public class TableService {
         return tableRepository.findById(tableId)
                 .orElseThrow(() -> new RuntimeException("Table not found with id: " + tableId));
     }
+
+    public TableEntity getByIdAndRestaurantId(String tableNumber, Long restaurantId) {
+        return tableRepository.findByTableNumberAndRestaurantId(tableNumber, restaurantId)
+                .orElseThrow(() -> new RuntimeException("Table not found for given restaurant and table ID"));
+    }
+
 
 }

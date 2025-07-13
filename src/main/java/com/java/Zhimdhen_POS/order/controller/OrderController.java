@@ -1,6 +1,7 @@
 package com.java.Zhimdhen_POS.order.controller;
 
 
+import com.java.Zhimdhen_POS.auth.helper.UserInfoDetails;
 import com.java.Zhimdhen_POS.order.mapper.CustomOrderMapper;
 import com.java.Zhimdhen_POS.order.mapper.OrderMapper;
 import com.java.Zhimdhen_POS.order.model.Order;
@@ -8,6 +9,8 @@ import com.java.Zhimdhen_POS.order.model.OrderDTO;
 import com.java.Zhimdhen_POS.order.model.OrderResponseDTO;
 import com.java.Zhimdhen_POS.order.service.OrderService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -42,9 +45,11 @@ public class OrderController {
     }
 
     @GetMapping("/new-count")
-    public Map<Long, Long> getNewOrdersCount() {
-        return orderService.countNewOrdersByTable();
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CASHIER')")
+    public Map<Long, Long> getMyNewOrdersCount(@AuthenticationPrincipal UserInfoDetails me) {
+        return orderService.countNewOrdersByTableForRestaurant(me.getRestaurantId());
     }
+
 
     @PostMapping("/mark-viewed/{tableId}")
     public void markOrdersAsViewed(@PathVariable Long tableId) {
@@ -59,4 +64,12 @@ public class OrderController {
         }
         return customOrderMapper.toDetailedResponse(order);
     }
+
+    @GetMapping("/by-restaurant")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CASHIER')")
+    public List<OrderResponseDTO> listOrdersForMyRestaurant(@AuthenticationPrincipal UserInfoDetails me) {
+        return orderService.getOrdersByRestaurantId(me.getRestaurantId());
+    }
+
+
 }

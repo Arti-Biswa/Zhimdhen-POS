@@ -18,7 +18,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://192.168.1.115:4200")  // Angular IP
+                        .allowedOrigins("http://192.168.132.1:4200")  // Angular IP
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);

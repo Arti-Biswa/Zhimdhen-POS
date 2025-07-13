@@ -16,7 +16,7 @@ public class TableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "table_number", nullable = false, unique = true)
+    @Column(name = "table_number", nullable = false)
     private String tableNumber;
 
     @ManyToOne(optional = false)

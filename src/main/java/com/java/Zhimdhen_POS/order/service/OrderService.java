@@ -2,6 +2,7 @@ package com.java.Zhimdhen_POS.order.service;
 
 import com.java.Zhimdhen_POS.order.model.Order;
 import com.java.Zhimdhen_POS.order.model.OrderDTO;
+import com.java.Zhimdhen_POS.order.model.OrderResponseDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -17,4 +18,8 @@ public interface OrderService {
     void markOrdersAsViewed(Long tableId);
 
     Order getLatestOrderWithItems(Long tableId);
+
+    List<OrderResponseDTO> getOrdersByRestaurantId(Long restaurantId);
+
+    Map<Long, Long> countNewOrdersByTableForRestaurant(Long restaurantId);
 }
