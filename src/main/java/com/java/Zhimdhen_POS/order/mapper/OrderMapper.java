@@ -4,6 +4,8 @@ import com.java.Zhimdhen_POS.order.model.Order;
 import com.java.Zhimdhen_POS.order.model.OrderDTO;
 import com.java.Zhimdhen_POS.order.model.OrderItem;
 import com.java.Zhimdhen_POS.order.model.OrderResponseDTO;
+import com.java.Zhimdhen_POS.restaurant.model.Restaurant;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,10 +13,12 @@ import java.util.stream.Collectors;
 
 public class OrderMapper {
 
-    public static Order toEntity(OrderDTO orderDTO) {
+
+    public static Order toEntity(OrderDTO orderDTO, Restaurant restaurant) {
         Order order = new Order();
 
         order.setTableId(orderDTO.getTableId());
+        order.setRestaurant(restaurant);
         order.setOrderTime(LocalDateTime.now());
         order.setStatus("NEW");  // changed from PENDING to NEW
 

@@ -1,6 +1,7 @@
 package com.java.Zhimdhen_POS.order.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.java.Zhimdhen_POS.restaurant.model.Restaurant;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,4 +20,6 @@ public class OrderItem {
     @JoinColumn(name = "order_id")
     @JsonIgnore
     private Order order;
+
+
 }

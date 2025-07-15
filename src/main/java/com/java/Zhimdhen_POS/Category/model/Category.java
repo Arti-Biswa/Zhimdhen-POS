@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Table(
         name = "Category",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"restaurant_id", "name"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"restaurant_id","name"})
 )
 public class Category {
 
@@ -17,7 +17,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @JsonBackReference

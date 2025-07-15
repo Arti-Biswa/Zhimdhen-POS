@@ -1,5 +1,6 @@
 package com.java.Zhimdhen_POS.order.model;
 
+import com.java.Zhimdhen_POS.restaurant.model.Restaurant;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,7 +10,9 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "orders")
+@Table(name = "orders",
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"restaurant_id", "order_number"}))
 public class Order {
 
     @Id
@@ -31,4 +34,11 @@ public class Order {
             orderTime = LocalDateTime.now();
         }
     }
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
+
+
 }
